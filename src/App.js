@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Wifi, WifiOff, Send } from 'lucide-react';
 
 export default function SORDAairController() {
@@ -83,102 +83,311 @@ export default function SORDAairController() {
     }
   };
 
-  return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center p-4" 
-         style={{
-           background: 'linear-gradient(135deg, #87CEEB 0%, #E0F6FF 50%, #B0E0E6 100%)'
-         }}>
-      
-      {/* Floating clouds effect */}
-      <div className="absolute top-8 left-12 w-24 h-12 bg-white rounded-full opacity-70 blur-sm"></div>
-      <div className="absolute top-32 right-16 w-32 h-16 bg-white rounded-full opacity-60 blur-md"></div>
-      <div className="absolute bottom-32 left-1/4 w-28 h-14 bg-white rounded-full opacity-50 blur-sm"></div>
+  const styles = {
+    container: {
+      minHeight: '100vh',
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      position: 'relative',
+      background: 'linear-gradient(135deg, #87CEEB 0%, #E0F6FF 50%, #B0E0E6 100%)',
+      overflow: 'hidden',
+      fontFamily: 'system-ui, -apple-system, sans-serif'
+    },
+    clouds: {
+      position: 'absolute',
+      backgroundColor: 'white',
+      borderRadius: '50%',
+      filter: 'blur(8px)'
+    },
+    cloud1: {
+      width: '96px',
+      height: '48px',
+      top: '32px',
+      left: '48px',
+      opacity: 0.7
+    },
+    cloud2: {
+      width: '128px',
+      height: '64px',
+      top: '128px',
+      right: '64px',
+      opacity: 0.6,
+      filter: 'blur(16px)'
+    },
+    cloud3: {
+      width: '112px',
+      height: '56px',
+      bottom: '128px',
+      left: '25%',
+      opacity: 0.5
+    },
+    content: {
+      position: 'relative',
+      zIndex: 10,
+      width: '100%',
+      maxWidth: '800px'
+    },
+    header: {
+      textAlign: 'center',
+      marginBottom: '48px'
+    },
+    h1: {
+      fontSize: '48px',
+      fontWeight: 'bold',
+      color: 'white',
+      textShadow: '2px 2px 4px rgba(0, 0, 0, 0.2)',
+      marginBottom: '8px'
+    },
+    headerP: {
+      fontSize: '20px',
+      color: 'rgba(255, 255, 255, 0.95)',
+      textShadow: '1px 1px 2px rgba(0, 0, 0, 0.1)'
+    },
+    card: {
+      backgroundColor: 'white',
+      borderRadius: '16px',
+      boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
+      padding: '32px',
+      marginBottom: '32px'
+    },
+    statusBar: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: '32px',
+      paddingBottom: '24px',
+      borderBottom: '2px solid #E0F4FF'
+    },
+    statusInfo: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px'
+    },
+    statusConnected: {
+      fontSize: '18px',
+      fontWeight: '600',
+      color: '#22c55e'
+    },
+    statusDisconnected: {
+      fontSize: '18px',
+      fontWeight: '600',
+      color: '#ef4444'
+    },
+    statusUrl: {
+      fontSize: '14px',
+      color: '#666'
+    },
+    connectionSection: {
+      marginBottom: '32px'
+    },
+    label: {
+      display: 'block',
+      fontSize: '14px',
+      fontWeight: 500,
+      color: '#374151',
+      marginBottom: '12px'
+    },
+    urlInputGroup: {
+      display: 'flex',
+      gap: '8px'
+    },
+    urlInput: {
+      flex: 1,
+      padding: '12px 16px',
+      border: '2px solid #93c5fd',
+      borderRadius: '8px',
+      fontSize: '14px',
+      outline: 'none'
+    },
+    btn: {
+      padding: '12px 24px',
+      border: 'none',
+      borderRadius: '8px',
+      fontWeight: '600',
+      cursor: 'pointer',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px',
+      fontSize: '14px',
+      transition: 'all 0.3s'
+    },
+    btnConnect: {
+      backgroundColor: '#3b82f6',
+      color: 'white'
+    },
+    btnDisconnect: {
+      width: '100%',
+      backgroundColor: '#ef4444',
+      color: 'white',
+      marginBottom: '32px'
+    },
+    btnSend: {
+      background: 'linear-gradient(to right, #3b82f6, #06b6d4)',
+      color: 'white'
+    },
+    feedback: {
+      padding: '12px',
+      borderRadius: '8px',
+      marginBottom: '24px',
+      fontSize: '14px',
+      fontWeight: 500
+    },
+    feedbackSuccess: {
+      backgroundColor: '#dcfce7',
+      color: '#166534'
+    },
+    feedbackInfo: {
+      backgroundColor: '#dbeafe',
+      color: '#0c4a6e'
+    },
+    angleDisplay: {
+      background: 'linear-gradient(to right, #f0f9ff, #f0f9ff)',
+      borderRadius: '12px',
+      padding: '24px',
+      marginBottom: '32px',
+      textAlign: 'center'
+    },
+    angleValue: {
+      fontSize: '48px',
+      fontWeight: 'bold',
+      color: '#0284c7',
+      margin: 0
+    },
+    controlSection: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '24px'
+    },
+    sliderGroup: {
+      display: 'flex',
+      flexDirection: 'column'
+    },
+    slider: {
+      width: '100%',
+      height: '12px',
+      borderRadius: '8px',
+      outline: 'none',
+      appearance: 'none',
+      background: '#bfdbfe',
+      cursor: 'pointer',
+      marginBottom: '8px'
+    },
+    sliderLabels: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      fontSize: '12px',
+      color: '#999'
+    },
+    inputGroup: {
+      display: 'flex',
+      gap: '12px'
+    },
+    numberInput: {
+      flex: 1,
+      padding: '12px 16px',
+      border: '2px solid #93c5fd',
+      borderRadius: '8px',
+      fontSize: '14px',
+      outline: 'none'
+    },
+    presetsCard: {
+      backgroundColor: 'rgba(255, 255, 255, 0.9)'
+    },
+    presetsLabel: {
+      fontSize: '14px',
+      fontWeight: 500,
+      color: '#374151',
+      marginBottom: '16px'
+    },
+    presetsGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(4, 1fr)',
+      gap: '12px'
+    },
+    presetBtn: {
+      padding: '12px 8px',
+      backgroundColor: '#dbeafe',
+      color: '#1e40af',
+      fontWeight: 'bold',
+      border: 'none',
+      borderRadius: '8px',
+      cursor: 'pointer',
+      fontSize: '14px',
+      transition: 'all 0.3s'
+    }
+  };
 
-      {/* Main container */}
-      <div className="relative z-10 w-full max-w-2xl">
-        
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-white mb-2 drop-shadow-lg">SORDA-air</h1>
-          <p className="text-xl text-blue-50 drop-shadow">Morphing Wing Control System</p>
+  return (
+    <div style={styles.container}>
+      <div style={{...styles.clouds, ...styles.cloud1}}></div>
+      <div style={{...styles.clouds, ...styles.cloud2}}></div>
+      <div style={{...styles.clouds, ...styles.cloud3}}></div>
+
+      <div style={styles.content}>
+        <div style={styles.header}>
+          <h1 style={styles.h1}>SORDA-air</h1>
+          <p style={styles.headerP}>Morphing Wing Control System</p>
         </div>
 
-        {/* Status Card */}
-        <div className="bg-white rounded-2xl shadow-2xl p-8 mb-8">
-          {/* Connection Status */}
-          <div className="flex items-center justify-between mb-8 pb-6 border-b-2 border-blue-100">
-            <div className="flex items-center gap-3">
+        <div style={styles.card}>
+          <div style={styles.statusBar}>
+            <div style={styles.statusInfo}>
               {connected ? (
                 <>
-                  <Wifi className="w-6 h-6 text-green-500" />
-                  <span className="text-lg font-semibold text-green-600">Connected</span>
+                  <Wifi size={24} color="#22c55e" />
+                  <span style={styles.statusConnected}>Connected</span>
                 </>
               ) : (
                 <>
-                  <WifiOff className="w-6 h-6 text-red-500" />
-                  <span className="text-lg font-semibold text-red-600">Disconnected</span>
+                  <WifiOff size={24} color="#ef4444" />
+                  <span style={styles.statusDisconnected}>Disconnected</span>
                 </>
               )}
             </div>
-            <div className="text-sm text-gray-600">
+            <div style={styles.statusUrl}>
               {connected ? wsUrl : 'Not connected'}
             </div>
           </div>
 
-          {/* Connection Controls */}
           {!connected ? (
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
-                WebSocket URL
-              </label>
-              <div className="flex gap-2">
+            <div style={styles.connectionSection}>
+              <label style={styles.label}>WebSocket URL</label>
+              <div style={styles.urlInputGroup}>
                 <input
                   type="text"
                   value={tempUrl}
                   onChange={(e) => setTempUrl(e.target.value)}
                   placeholder="ws://localhost:8080"
-                  className="flex-1 px-4 py-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-500 transition"
+                  style={styles.urlInput}
                 />
-                <button
-                  onClick={connectWebSocket}
-                  className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition shadow-lg"
-                >
+                <button onClick={connectWebSocket} style={{...styles.btn, ...styles.btnConnect}}>
                   Connect
                 </button>
               </div>
             </div>
           ) : (
-            <button
-              onClick={disconnect}
-              className="w-full px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition mb-8"
-            >
+            <button onClick={disconnect} style={{...styles.btn, ...styles.btnDisconnect}}>
               Disconnect
             </button>
           )}
 
-          {/* Feedback Message */}
           {feedback && (
-            <div className={`p-3 rounded-lg mb-6 text-sm font-medium ${
-              feedback.includes('Connected') || feedback.includes('set to')
-                ? 'bg-green-100 text-green-800'
-                : 'bg-blue-100 text-blue-800'
-            }`}>
+            <div style={{...styles.feedback, ...(feedback.includes('Connected') || feedback.includes('set to') ? styles.feedbackSuccess : styles.feedbackInfo)}}>
               {feedback}
             </div>
           )}
 
-          {/* Current Angle Display */}
-          <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-6 mb-8">
-            <p className="text-gray-600 text-sm font-medium mb-2">Current Wing Angle</p>
-            <p className="text-5xl font-bold text-blue-600">{wingAngle.toFixed(1)}°</p>
+          <div style={styles.angleDisplay}>
+            <p style={{color: '#666', fontSize: '14px', fontWeight: 500, marginBottom: '8px'}}>Current Wing Angle</p>
+            <p style={styles.angleValue}>{wingAngle.toFixed(1)}°</p>
           </div>
 
-          {/* Angle Control */}
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-4">
-                Set Wing Angle (0° - 90°)
-              </label>
+          <div style={styles.controlSection}>
+            <div style={styles.sliderGroup}>
+              <label style={styles.label}>Set Wing Angle (0° - 90°)</label>
               <input
                 type="range"
                 min="0"
@@ -188,17 +397,16 @@ export default function SORDAairController() {
                 onMouseUp={handleSliderRelease}
                 onTouchEnd={handleSliderRelease}
                 disabled={!connected}
-                className="w-full h-3 bg-blue-200 rounded-lg appearance-none cursor-pointer accent-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={styles.slider}
               />
-              <div className="flex justify-between text-xs text-gray-500 mt-2">
+              <div style={styles.sliderLabels}>
                 <span>0°</span>
                 <span>45°</span>
                 <span>90°</span>
               </div>
             </div>
 
-            {/* Manual Input */}
-            <div className="flex gap-3">
+            <div style={styles.inputGroup}>
               <input
                 type="number"
                 min="0"
@@ -207,24 +415,23 @@ export default function SORDAairController() {
                 onChange={(e) => setInputAngle(Math.min(90, Math.max(0, e.target.value)))}
                 disabled={!connected}
                 placeholder="Enter angle"
-                className="flex-1 px-4 py-3 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                style={styles.numberInput}
               />
               <button
                 onClick={sendAngle}
                 disabled={!connected}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-lg hover:from-blue-600 hover:to-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed transition shadow-lg flex items-center gap-2"
+                style={{...styles.btn, ...styles.btnSend}}
               >
-                <Send className="w-4 h-4" />
+                <Send size={18} />
                 Send
               </button>
             </div>
           </div>
         </div>
 
-        {/* Quick Presets */}
-        <div className="bg-white bg-opacity-90 rounded-2xl shadow-xl p-6">
-          <p className="text-sm font-medium text-gray-700 mb-4">Quick Presets</p>
-          <div className="grid grid-cols-4 gap-3">
+        <div style={{...styles.card, ...styles.presetsCard}}>
+          <p style={styles.presetsLabel}>Quick Presets</p>
+          <div style={styles.presetsGrid}>
             {[0, 15, 45, 90].map((angle) => (
               <button
                 key={angle}
@@ -239,7 +446,7 @@ export default function SORDAairController() {
                   }, 50);
                 }}
                 disabled={!connected}
-                className="py-3 px-2 bg-blue-100 text-blue-700 font-bold rounded-lg hover:bg-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                style={{...styles.presetBtn, opacity: !connected ? 0.5 : 1}}
               >
                 {angle}°
               </button>
